@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Bill Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.x.x/dist/alpine.min.js" defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div x-data="phoneBillApp()" class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-4">Phone Bill Calculator</h1>
+        
+        <form @submit.prevent="calculateBill" class="space-y-4">
+            <div>
+                <label for="price_plan" class="block text-sm font-medium text-gray-700">Price Plan:</label>
+                <input type="text" id="price_plan" x-model="pricePlan" required
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+
+            <div>
+                <label for="actions" class="block text-sm font-medium text-gray-700">Actions (comma-separated):</label>
+                <input type="text" id="actions" x-model="actions" required
+                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">
+                Calculate
+            </button>
+        </form>
+
+        <div x-show="total !== null" class="mt-4">
+            <h2 class="text-lg font-semibold">Total Bill:</h2>
+            <p x-text="total" class="text-xl font-bold text-indigo-600"></p>
+        </div>
+
+        <div x-show="error" class="mt-4 text-red-600">
+            <p x-text="error"></p>
+        </div>
+    </div>
+
+    <script>
+        function phoneBillApp() {
+            return {
+                pricePlan: '',
+                actions: '',
+                total: null,
+                error: null,
+                async calculateBill() {
+                    try {
+                        const response = await fetch('http://127.0.0.1:4011/api/phonebill', {
+                            method: 'POST', // Ensure method is POST if the server expects POST
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                price_plan: this.pricePlan,
+                                actions: this.actions
+                            })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        this.total = data.total;
+                        this.error = null; // Clear any previous errors
+                    } catch (error) {
+                        this.error = `Failed to fetch: ${error.message}`;
+                        this.total = null; // Clear any previous total
+                    }
+                }
+
+            }
+        }
+    </script>
+</body>
+</html>

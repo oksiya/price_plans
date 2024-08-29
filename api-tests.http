@@ -1,0 +1,47 @@
+### Test POST /api/phonebill
+POST http://127.0.0.1:4011/api/phonebill
+Content-Type: application/json
+
+{
+    "price_plan": "sms 101",
+    "actions": "call, sms, call"
+}
+
+###
+
+### Test GET /api/price_plans
+GET http://127.0.0.1:4011/api/price_plans
+
+###
+
+### Test POST /api/price_plan/create
+POST http://127.0.0.1:4011/api/price_plan/create
+Content-Type: application/json
+
+{
+    "name": "sms_kick_100",
+    "call_cost": 2.65,
+    "sms_cost": 0.45
+}
+
+###
+
+### Test POST /api/price_plan/update
+POST http://127.0.0.1:4011/api/price_plan/update
+Content-Type: application/json
+
+{
+    "name": "sms_kick_100",
+    "call_cost": 3.00,
+    "sms_cost": 0.50
+}
+
+###
+
+### Test POST /api/price_plan/delete
+POST http://127.0.0.1:4011/api/price_plan/delete
+Content-Type: application/json
+
+{
+    "id": 1
+}
